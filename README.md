@@ -124,3 +124,73 @@ ingest_char --> peek_alphanumeric : [a-zA-Z]
 ingest_char --> lex_error : ELSE
   lex_error --> [*]
 ```
+
+## Modelling a lexer as a state machine
+
+Let's consider a simple programming language, perhaps a dialect of BASIC. Here are some high-level features of this made-up language:
+
+- Supports basic arithmetic operators (+, -, *, /)
+- Supports comparators (==, !=, >, >=, <, <=)
+- Supports variable declaration
+- Supports simple strings
+- Supports keywords (LABEL, GOTO, PRINT, INPUT, LET, IF, THEN, ENDIF, WHILE, REPEAT, ENDWHILE)
+
+With just these features, one can create a somewhat powerful programming language.
+
+### What is a lexer?
+
+A lexer takes string input and returns tokens. That's it.
+
+### What is a token?
+
+A token is the summarized output of the string input. The job of the lexer is to convert the string input into tokens. For a more concrete analogy, think of a token as a valid English word. How do we know that everything in this sentence so far consists of English words, but `guihlna apt ew tahui` does not? Figuring that out is what your brain[^broca] does. For {language} code, that's what the lexer does.
+
+Here are some examples of tokens:
+
+```rust
+impl TokenKind {
+  pub const NONE: TokenType = ("NONE", -3);
+  pub const LEX_ERR: TokenType = ("LEX_ERR", -2);
+  pub const EOF: TokenType = ("EOF", -1);
+	pub const NEWLINE: TokenType = ("NEWLINE", 0);
+	pub const NUMBER: TokenType = ("NUMBER", 1);
+	pub const IDENT: TokenType = ("IDENT", 2);
+	pub const STRING: TokenType = ("STRING", 3);
+	// Keywords.
+	pub const LABEL: TokenType = ("LABEL", 101);
+	pub const GOTO: TokenType = ("GOTO", 102);
+	pub const PRINT: TokenType = ("PRINT", 103);
+	pub const INPUT: TokenType = ("INPUT", 104);
+	pub const LET: TokenType = ("LET", 105);
+	pub const IF: TokenType = ("IF", 106);
+	pub const THEN: TokenType = ("THEN", 107);
+	pub const ENDIF: TokenType = ("ENDIF", 108);
+	pub const WHILE: TokenType = ("WHILE", 109);
+	pub const REPEAT: TokenType = ("REPEAT", 110);
+	pub const ENDWHILE: TokenType = ("ENDWHILE", 111);
+	// Operators.
+	pub const EQ: TokenType = ("EQ", 201);
+	pub const PLUS: TokenType = ("PLUS", 202);
+	pub const MINUS: TokenType = ("MINUS", 203);
+	pub const ASTERISK: TokenType = ("ASTERISK", 204);
+	pub const SLASH: TokenType = ("SLASH", 205);
+	pub const EQEQ: TokenType = ("EQEQ", 206);
+	pub const NOTEQ: TokenType = ("NOTEQ", 207);
+	pub const LT: TokenType = ("LT", 208);
+	pub const LTEQ: TokenType = ("LTEQ", 209);
+	pub const GT: TokenType = ("GT", 210);
+	pub const GTEQ: TokenType = ("GTEQ", 211);
+```
+
+For the cool kids, the lexer (and rest of the compiler) is written in Rust. Be excited. For everyone else, the phrase inside double-quotes on each line is the only relevant portion. That's the name of the token that's being defined. You should be able to guess which concept that each of these tokens represents. 
+
+The job of the lexer is to convert raw string text in {language} into these tokens. If the lexer is unable to do that at any point, it will give up and declare an error. 
+
+Pretty cool, right? It should also start to become clear that we can model our lexer as a state machine. Every sequence of 1 or more characters will eventually find a home in one of these tokens (or be discarded, if it's whitespace or a newline).
+
+Let's take a look at how a series of characters is converted into token.
+
+- snippet of easy code from match statement
+
+
+[^broca]: In fact, Broca's area is believed to be responsible for human language processing. At least, that's what they believed 10 years ago, when I finished my neuroscience degree. Sadly, this has been the only time in the last several years that that degree has come in handy.  
