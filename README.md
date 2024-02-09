@@ -9,3 +9,7 @@ This is a compiler for a dialect of [BASIC](https://en.wikipedia.org/wiki/BASIC)
 **Parser**: Takes the output of the lexer (i.e. the tokens) and verifies that the tokens occur in an order that is allowed
 
 **Emitter**: Converts valid sequences of tokens into code in the target language (in this case, `C`)  
+
+## Features/Flaws of Teeny Tiny
+
+- No shadowing of variables 

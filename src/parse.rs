@@ -5,9 +5,9 @@ pub struct Parser {
   pub lexer: Lexer,
   pub cur_token: Token,
   pub peek_token: Token,
-  pub symbols: Vec<&'static str>, // Variables declared so far
-  pub labels_declared: Vec<&'static str>, // Labels declared so far
-  pub labels_gotoed: Vec<&'static str>, // Labels goto'ed so far
+  pub symbols: Vec<String>, // Variables declared so far
+  pub labels_declared: Vec<String>, // Labels declared so far
+  pub labels_gotoed: Vec<String>, // Labels goto'ed so far
 }
 
 impl Parser {
@@ -71,6 +71,14 @@ impl Parser {
     while !self.check_token(&TokenKind::EOF) {
       self.statement();
     }
+
+    for l in &self.labels_gotoed {
+      if !self.labels_declared.contains(l) {
+        let mut msg: String = String::from("Attempting to GOTO to undeclared label: ");
+        msg.push_str(l);
+        self.abort(msg);
+      }
+    }
   }
 
   pub fn statement(&mut self) {
@@ -125,7 +133,15 @@ impl Parser {
         println!("STATEMENT-LABEL");
         self.next_token();
 
+        // Check if this label already exists (that means it's being declared twice, which is not allowed)
+        if self.labels_declared.contains(&self.cur_token.text) {
+          let mut msg: String = String::from("Label already exists: ");
+          msg.push_str(&self.cur_token.text);
+          self.abort(msg);
+        }
 
+        // Add this to list of labels that have been declared
+        self.labels_declared.push(self.cur_token.text.clone());
         self.match_token(&TokenKind::IDENT);
       },
       
@@ -133,6 +149,7 @@ impl Parser {
       TokenKind::GOTO => {
         println!("STATEMENT-GOTO");
         self.next_token();
+        self.labels_gotoed.push(self.cur_token.text.clone());
         self.match_token(&TokenKind::IDENT);
       },
 
@@ -140,6 +157,11 @@ impl Parser {
       TokenKind::LET => {
         println!("STATEMENT-LET");
         self.next_token();
+
+        if !self.symbols.contains(&self.cur_token.text) {
+          self.symbols.push(self.cur_token.text.clone());
+        }
+
         self.match_token(&TokenKind::IDENT);
         self.match_token(&TokenKind::EQ);
         self.expression();
@@ -149,6 +171,11 @@ impl Parser {
       TokenKind::INPUT => {
         println!("STATEMENT-INPUT");
         self.next_token();
+
+        if !self.symbols.contains(&self.cur_token.text) {
+          self.symbols.push(self.cur_token.text.clone());
+        }
+
         self.match_token(&TokenKind::IDENT);
       },
       _ => {
@@ -249,6 +276,13 @@ impl Parser {
       self.next_token();
     } 
     else if self.check_token(&TokenKind::IDENT) {
+      // If variable doesn't already exist, then it's an error
+      if !self.symbols.contains(&self.cur_token.text) {
+        let mut msg: String = String::from("Referencing variable before assignment: ");
+        msg.push_str(&self.cur_token.text);
+        self.abort(msg);
+      }
+
       self.next_token();
     } 
     else {
