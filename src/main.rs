@@ -1,15 +1,17 @@
+use std::fs;
+
 mod lex;
+mod parse;
 
 fn main() {
-    let source: String = String::from("IF+-123 foo*THEN/");
+    println!("Teeny Tiny Compiler 0.1");
+    let source = fs::read_to_string("src/hello.teeny").expect("File not found");
     let mut lexer: lex::Lexer = lex::Lexer::new(source);
+    let mut parser: parse::Parser = parse::Parser::new(lexer);
+
+    parser.program();
+    println!("Parsing completed.");
     
-    let mut t: lex::Token = lexer.get_token();
-    println!("{}", t.kind.0);
-    while t.kind != lex::TokenKind::EOF {
-        t = lexer.get_token();
-        println!("{}", t.kind.0);
-    }
 }
 
 // Next - Part 2

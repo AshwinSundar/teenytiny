@@ -41,6 +41,7 @@ impl Lexer {
   }
 
   pub fn abort(&self, msg: String) {
+    print!("{}", msg);
     exit(1)
   }
   
@@ -65,21 +66,21 @@ impl Lexer {
     let t: Token;
 
     match (self.cur_char, self.peek()) {
-      ('+', _) => { t = Token{text: self.cur_char.to_string(), kind: TokenKind::PLUS}; }, // Plus token
-      ('-', _) => { t = Token{text: self.cur_char.to_string(), kind: TokenKind::MINUS}; }, // Minus token
-      ('*', _) => { t = Token{text: self.cur_char.to_string(), kind: TokenKind::ASTERISK}; }, // Asterisk token
-      ('/', _) => { t = Token{text: self.cur_char.to_string(), kind: TokenKind::SLASH}; }, // Slash token
-      ('\n', _) => { t = Token{text: self.cur_char.to_string(), kind: TokenKind::NEWLINE}; }, // Newline token
-      ('\0', _) => { t = Token{text: self.cur_char.to_string(), kind: TokenKind::EOF}; }, // EOF token
+      ('+', _) => { t = Token{text: self.cur_char.to_string(), token_type: TokenKind::PLUS}; }, // Plus token
+      ('-', _) => { t = Token{text: self.cur_char.to_string(), token_type: TokenKind::MINUS}; }, // Minus token
+      ('*', _) => { t = Token{text: self.cur_char.to_string(), token_type: TokenKind::ASTERISK}; }, // Asterisk token
+      ('/', _) => { t = Token{text: self.cur_char.to_string(), token_type: TokenKind::SLASH}; }, // Slash token
+      ('\n', _) => { t = Token{text: self.cur_char.to_string(), token_type: TokenKind::NEWLINE}; }, // Newline token
+      ('\0', _) => { t = Token{text: self.cur_char.to_string(), token_type: TokenKind::EOF}; }, // EOF token
       ('=', n) => {
         if '=' == n {
           let mut text = self.cur_char.to_string();
           self.next_char();
           text.push_str(&self.cur_char.to_string());
-          t = Token{text: text, kind: TokenKind::EQEQ};
+          t = Token{text: text, token_type: TokenKind::EQEQ};
         }
         else {
-          t = Token{text: self.cur_char.to_string(), kind: TokenKind::EQ};
+          t = Token{text: self.cur_char.to_string(), token_type: TokenKind::EQ};
         }
       },
       ('>', n) => {
@@ -87,10 +88,10 @@ impl Lexer {
           let mut text = self.cur_char.to_string();
           self.next_char();
           text.push_str(&self.cur_char.to_string());
-          t = Token{text: text, kind: TokenKind::GTEQ};
+          t = Token{text: text, token_type: TokenKind::GTEQ};
         }
         else {
-          t = Token{text: self.cur_char.to_string(), kind: TokenKind::GT};
+          t = Token{text: self.cur_char.to_string(), token_type: TokenKind::GT};
         }
       },
       ('<', n) => {
@@ -98,10 +99,10 @@ impl Lexer {
           let mut text = self.cur_char.to_string();
           self.next_char();
           text.push_str(&self.cur_char.to_string());
-          t = Token{text: text, kind: TokenKind::LTEQ};
+          t = Token{text: text, token_type: TokenKind::LTEQ};
         }
         else {
-          t = Token{text: self.cur_char.to_string(), kind: TokenKind::LT};
+          t = Token{text: self.cur_char.to_string(), token_type: TokenKind::LT};
         }
       },
       ('!', n) => {
@@ -109,10 +110,10 @@ impl Lexer {
           let mut text = self.cur_char.to_string();
           self.next_char();
           text.push_str(&self.cur_char.to_string());
-          t = Token{text: text, kind: TokenKind::NOTEQ};
+          t = Token{text: text, token_type: TokenKind::NOTEQ};
         }
         else {
-          t = Token{ text: self.cur_char.to_string(), kind: TokenKind::LEX_ERR}; // Unknown token
+          t = Token{ text: self.cur_char.to_string(), token_type: TokenKind::LEX_ERR}; // Unknown token
           let mut msg = String::from("Lexing error. Expected !=, got !");
           msg.push_str(&n.to_string());
           self.abort(msg);
@@ -131,7 +132,7 @@ impl Lexer {
           substring.push(self.cur_char);
         }
 
-        t = Token{text: substring, kind: TokenKind::STRING};
+        t = Token{text: substring, token_type: TokenKind::STRING};
       },
       (c, _) if c.is_numeric() => { // This case consists of some ugly code...feels way too verbose and nested
         let mut substring = self.cur_char.to_string();
@@ -155,7 +156,7 @@ impl Lexer {
           }
         }
 
-        t = Token{text: substring, kind: TokenKind::NUMBER};
+        t = Token{text: substring, token_type: TokenKind::NUMBER};
       },
       (c, _) if c.is_alphabetic() => {
         let mut substring = self.cur_char.to_string();
@@ -167,12 +168,12 @@ impl Lexer {
         
         let keyword = Token::check_if_keyword(&substring);
         match keyword {
-          Some(k) => t = Token{text: substring, kind: k},
-          None => t = Token{text: substring, kind: TokenKind::IDENT}
+          Some(k) => t = Token{text: substring, token_type: k},
+          None => t = Token{text: substring, token_type: TokenKind::IDENT}
         }
       }
       _ => { 
-        t = Token{text: self.cur_char.to_string(), kind: TokenKind::LEX_ERR}; // Unknown token
+        t = Token{text: self.cur_char.to_string(), token_type: TokenKind::LEX_ERR}; // Unknown token
         let mut msg = String::from("Lexing error. ");
         msg.push_str(&self.cur_char.to_string());
         self.abort(msg);
@@ -184,10 +185,17 @@ impl Lexer {
   }
 }
 
+
+pub type TokenType = (&'static str, i16);
+
+// Token is an enum of type TokenType = (&'static str, i16)
+// The actual enum values are defined in TokenKind
+#[derive(Clone)]
 pub struct Token {
   pub text: String,
-  pub kind: (&'static str, i16),
+  pub token_type: TokenType,
 }
+
 impl Token {
   pub fn check_if_keyword(token_text: &String) -> Option<(&'static str, i16)> {
     for k in TokenKind::ALL {
@@ -200,44 +208,47 @@ impl Token {
 }
 
 pub struct TokenKind {
-  text: String,
-  val: i16,
+  // pub text: String,
+  pub name: &'static str,
+  pub val: i16,
 }
 
 impl TokenKind {
-  pub const LEX_ERR: (&'static str, i16) = ("LEX_ERR", -2);
-  pub const EOF: (&'static str, i16) = ("EOF", -1);
-	pub const NEWLINE: (&'static str, i16) = ("NEWLINE", 0);
-	pub const NUMBER: (&'static str, i16) = ("NUMBER", 1);
-	pub const IDENT: (&'static str, i16) = ("IDENT", 2);
-	pub const STRING: (&'static str, i16) = ("STRING", 3);
+  pub const NONE: TokenType = ("NONE", -3);
+  pub const LEX_ERR: TokenType = ("LEX_ERR", -2);
+  pub const EOF: TokenType = ("EOF", -1);
+	pub const NEWLINE: TokenType = ("NEWLINE", 0);
+	pub const NUMBER: TokenType = ("NUMBER", 1);
+	pub const IDENT: TokenType = ("IDENT", 2);
+	pub const STRING: TokenType = ("STRING", 3);
 	// Keywords.
-	pub const LABEL: (&'static str, i16) = ("LABEL", 101);
-	pub const GOTO: (&'static str, i16) = ("GOTO", 102);
-	pub const PRINT: (&'static str, i16) = ("PRINT", 103);
-	pub const INPUT: (&'static str, i16) = ("INPUT", 104);
-	pub const LET: (&'static str, i16) = ("LET", 105);
-	pub const IF: (&'static str, i16) = ("IF", 106);
-	pub const THEN: (&'static str, i16) = ("THEN", 107);
-	pub const ENDIF: (&'static str, i16) = ("ENDIF", 108);
-	pub const WHILE: (&'static str, i16) = ("WHILE", 109);
-	pub const REPEAT: (&'static str, i16) = ("REPEAT", 110);
-	pub const ENDWHILE: (&'static str, i16) = ("ENDWHILE", 111);
+	pub const LABEL: TokenType = ("LABEL", 101);
+	pub const GOTO: TokenType = ("GOTO", 102);
+	pub const PRINT: TokenType = ("PRINT", 103);
+	pub const INPUT: TokenType = ("INPUT", 104);
+	pub const LET: TokenType = ("LET", 105);
+	pub const IF: TokenType = ("IF", 106);
+	pub const THEN: TokenType = ("THEN", 107);
+	pub const ENDIF: TokenType = ("ENDIF", 108);
+	pub const WHILE: TokenType = ("WHILE", 109);
+	pub const REPEAT: TokenType = ("REPEAT", 110);
+	pub const ENDWHILE: TokenType = ("ENDWHILE", 111);
 	// Operators.
-	pub const EQ: (&'static str, i16) = ("EQ", 201);
-	pub const PLUS: (&'static str, i16) = ("PLUS", 202);
-	pub const MINUS: (&'static str, i16) = ("MINUS", 203);
-	pub const ASTERISK: (&'static str, i16) = ("ASTERISK", 204);
-	pub const SLASH: (&'static str, i16) = ("SLASH", 205);
-	pub const EQEQ: (&'static str, i16) = ("EQEQ", 206);
-	pub const NOTEQ: (&'static str, i16) = ("NOTEQ", 207);
-	pub const LT: (&'static str, i16) = ("LT", 208);
-	pub const LTEQ: (&'static str, i16) = ("LTEQ", 209);
-	pub const GT: (&'static str, i16) = ("GT", 210);
-	pub const GTEQ: (&'static str, i16) = ("GTEQ", 211);
+	pub const EQ: TokenType = ("EQ", 201);
+	pub const PLUS: TokenType = ("PLUS", 202);
+	pub const MINUS: TokenType = ("MINUS", 203);
+	pub const ASTERISK: TokenType = ("ASTERISK", 204);
+	pub const SLASH: TokenType = ("SLASH", 205);
+	pub const EQEQ: TokenType = ("EQEQ", 206);
+	pub const NOTEQ: TokenType = ("NOTEQ", 207);
+	pub const LT: TokenType = ("LT", 208);
+	pub const LTEQ: TokenType = ("LTEQ", 209);
+	pub const GT: TokenType = ("GT", 210);
+	pub const GTEQ: TokenType = ("GTEQ", 211);
   
 
-  pub const ALL: [(&'static str, i16); 28] = [
+  pub const ALL: [TokenType; 29] = [
+    Self::NONE,
     Self::LEX_ERR,
     Self::EOF,
     Self::NEWLINE,
