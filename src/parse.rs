@@ -105,6 +105,7 @@ impl Parser<'_> {
         }
         else {
           // This is an expression - evaluate it and print as a float
+          // YOU ARE HERE - somehow get the result of self.expression and drop it in here...may need to refactor some functions.
           self.emitter.emit_line(&format!("printf(\"%.2f\", (float)());"));
           self.expression();
         }
