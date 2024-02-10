@@ -1,8 +1,10 @@
 use std::process::exit;
 use crate::lex::{Lexer, TokenType, TokenKind, Token};
+use crate::emit::Emitter;
 
-pub struct Parser {
+pub struct Parser<'a> {
   pub lexer: Lexer,
+  pub emitter: &'a mut Emitter,
   pub cur_token: Token,
   pub peek_token: Token,
   pub symbols: Vec<String>, // Variables declared so far
@@ -10,10 +12,11 @@ pub struct Parser {
   pub labels_gotoed: Vec<String>, // Labels goto'ed so far
 }
 
-impl Parser {
-  pub fn new(lx: Lexer) -> Parser {
+impl Parser<'_> {
+  pub fn new(lx: Lexer, em: &mut Emitter) -> Parser {
     let mut p = Parser {
       lexer: lx,
+      emitter: em,
       cur_token: Token { text: String::from(""), token_type: TokenKind::NONE },
       peek_token: Token { text: String::from(""), token_type: TokenKind::NONE },
       symbols: Vec::new(),
@@ -62,6 +65,8 @@ impl Parser {
 
   pub fn program(&mut self) {
     println!("PROGRAM");
+    self.emitter.header_line("#include <stdio.h>");
+    self.emitter.header_line("int main(void){");
 
     // Skip excess newlines
     while self.check_token(&TokenKind::NEWLINE) {
@@ -71,6 +76,10 @@ impl Parser {
     while !self.check_token(&TokenKind::EOF) {
       self.statement();
     }
+
+    // Close main function
+    self.emitter.emit_line("return 0;");
+    self.emitter.emit_line("}");
 
     for l in &self.labels_gotoed {
       if !self.labels_declared.contains(l) {
@@ -85,13 +94,18 @@ impl Parser {
     match self.cur_token.token_type {
       // "PRINT" (expression | string)
       TokenKind::PRINT => {
-        println!("STATEMENT-PRINT");
         self.next_token();
 
         if self.cur_token.token_type == TokenKind::STRING {
+          // This is a simple string - just print it
+          self.emitter.emit_line(&format!("printf(\"{});", &self.cur_token.text));
+          self.emitter.emit_line("printf(\"\\n\");");
+
           self.next_token();
         }
         else {
+          // This is an expression - evaluate it and print as a float
+          self.emitter.emit_line(&format!("printf(\"%.2f\", (float)());"));
           self.expression();
         }
       }, 

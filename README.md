@@ -152,34 +152,34 @@ impl TokenKind {
   pub const NONE: TokenType = ("NONE", -3);
   pub const LEX_ERR: TokenType = ("LEX_ERR", -2);
   pub const EOF: TokenType = ("EOF", -1);
-	pub const NEWLINE: TokenType = ("NEWLINE", 0);
-	pub const NUMBER: TokenType = ("NUMBER", 1);
-	pub const IDENT: TokenType = ("IDENT", 2);
-	pub const STRING: TokenType = ("STRING", 3);
-	// Keywords.
-	pub const LABEL: TokenType = ("LABEL", 101);
-	pub const GOTO: TokenType = ("GOTO", 102);
-	pub const PRINT: TokenType = ("PRINT", 103);
-	pub const INPUT: TokenType = ("INPUT", 104);
-	pub const LET: TokenType = ("LET", 105);
-	pub const IF: TokenType = ("IF", 106);
-	pub const THEN: TokenType = ("THEN", 107);
-	pub const ENDIF: TokenType = ("ENDIF", 108);
-	pub const WHILE: TokenType = ("WHILE", 109);
-	pub const REPEAT: TokenType = ("REPEAT", 110);
-	pub const ENDWHILE: TokenType = ("ENDWHILE", 111);
-	// Operators.
-	pub const EQ: TokenType = ("EQ", 201);
-	pub const PLUS: TokenType = ("PLUS", 202);
-	pub const MINUS: TokenType = ("MINUS", 203);
-	pub const ASTERISK: TokenType = ("ASTERISK", 204);
-	pub const SLASH: TokenType = ("SLASH", 205);
-	pub const EQEQ: TokenType = ("EQEQ", 206);
-	pub const NOTEQ: TokenType = ("NOTEQ", 207);
-	pub const LT: TokenType = ("LT", 208);
-	pub const LTEQ: TokenType = ("LTEQ", 209);
-	pub const GT: TokenType = ("GT", 210);
-	pub const GTEQ: TokenType = ("GTEQ", 211);
+  pub const NEWLINE: TokenType = ("NEWLINE", 0);
+  pub const NUMBER: TokenType = ("NUMBER", 1);
+  pub const IDENT: TokenType = ("IDENT", 2);
+  pub const STRING: TokenType = ("STRING", 3);
+  // Keywords.
+  pub const LABEL: TokenType = ("LABEL", 101);
+  pub const GOTO: TokenType = ("GOTO", 102);
+  pub const PRINT: TokenType = ("PRINT", 103);
+  pub const INPUT: TokenType = ("INPUT", 104);
+  pub const LET: TokenType = ("LET", 105);
+  pub const IF: TokenType = ("IF", 106);
+  pub const THEN: TokenType = ("THEN", 107);
+  pub const ENDIF: TokenType = ("ENDIF", 108);
+  pub const WHILE: TokenType = ("WHILE", 109);
+  pub const REPEAT: TokenType = ("REPEAT", 110);
+  pub const ENDWHILE: TokenType = ("ENDWHILE", 111);
+  // Operators.
+  pub const EQ: TokenType = ("EQ", 201);
+  pub const PLUS: TokenType = ("PLUS", 202);
+  pub const MINUS: TokenType = ("MINUS", 203);
+  pub const ASTERISK: TokenType = ("ASTERISK", 204);
+  pub const SLASH: TokenType = ("SLASH", 205);
+  pub const EQEQ: TokenType = ("EQEQ", 206);
+  pub const NOTEQ: TokenType = ("NOTEQ", 207);
+  pub const LT: TokenType = ("LT", 208);
+  pub const LTEQ: TokenType = ("LTEQ", 209);
+  pub const GT: TokenType = ("GT", 210);
+  pub const GTEQ: TokenType = ("GTEQ", 211);
 ```
 
 For the cool kids, the lexer (and rest of the compiler) is written in Rust. Be excited. For everyone else, the phrase inside double-quotes on each line is the only relevant portion. That's the name of the token that's being defined. You should be able to guess which concept that each of these tokens represents. 
