@@ -1,6 +1,6 @@
 # Teeny Tiny Compiler
 
-This is a compiler for a dialect of [BASIC](https://en.wikipedia.org/wiki/BASIC) called `Teeny Tiny`. It is a Rust port of Austin Henley's [implementation in Python](https://austinhenley.com/blog/teenytinycompiler1.html). One day, if I'm brave enough, I'll write my own tutorial as well.  
+This is a compiler[^technically] for a dialect of [BASIC](https://en.wikipedia.org/wiki/BASIC) called `Teeny Tiny`. It is a Rust port of Austin Henley's [implementation in Python](https://austinhenley.com/blog/teenytinycompiler1.html). One day, when I'm brave enough, I'll write my own tutorial as well.  
 
 ## Definitions
 
@@ -12,6 +12,7 @@ This is a compiler for a dialect of [BASIC](https://en.wikipedia.org/wiki/BASIC)
 
 ## Features/Flaws of Teeny Tiny
 
+- No functions
 - No shadowing of variables 
 - Variable names can only contain letters (no numbers or special characters)
 
@@ -193,4 +194,5 @@ Let's take a look at how a series of characters is converted into token.
 - snippet of easy code from match statement
 
 
+[^technically]: Technically, a source-to-source transpiler between "Teeny Tiny" BASIC and C.
 [^broca]: In fact, Broca's area is believed to be responsible for human language processing. At least, that's what they believed 10 years ago, when I finished my neuroscience degree. Sadly, this has been the only time in the last several years that that degree has come in handy.  
