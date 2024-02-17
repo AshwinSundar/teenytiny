@@ -191,7 +191,7 @@ Pretty cool, right? It should also start to become clear that we can model our l
 
 Let's take a look at how a series of characters is converted into token.
 
-- snippet of easy code from match statement
+- TODO: explain a snippet of easy code from match statement
 
 
 [^technically]: Technically, a source-to-source transpiler between "Teeny Tiny" BASIC and C.
