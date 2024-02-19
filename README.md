@@ -6,7 +6,7 @@ This is a compiler[^technically] for a dialect of [BASIC](https://en.wikipedia.o
 
 **Lexer**: Using input code, generates bite-sized components called "tokens"
 
-**Parser**: Takes the output of the lexer (i.e. the tokens) and verifies that the tokens occur in an order that is allowed
+**Parser**: Takes the output of the lexer (i.e. the tokens) and verifies that the tokens occur in an order that is allowed. If the sequence is valid, produce a syntax tree.
 
 **Emitter**: Converts valid sequences of tokens into code in the target language (in this case, `C`)  
 
