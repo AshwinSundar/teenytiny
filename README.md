@@ -2,6 +2,8 @@
 
 This is a compiler[^technically] for a dialect of [BASIC](https://en.wikipedia.org/wiki/BASIC) called `Teeny Tiny`. It is a Rust port of Austin Henley's [implementation in Python](https://austinhenley.com/blog/teenytinycompiler1.html). One day, when I'm brave enough, I'll write my own tutorial as well.  
 
+[![justforfunnoreally.dev badge](https://img.shields.io/badge/justforfunnoreally-dev-9ff)](https://justforfunnoreally.dev)
+
 ## Definitions
 
 **Lexer**: Using input code, generates bite-sized components called "tokens"
