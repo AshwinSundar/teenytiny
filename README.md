@@ -185,7 +185,7 @@ impl TokenKind {
   pub const GTEQ: TokenType = ("GTEQ", 211);
 ```
 
-For the cool kids, the lexer (and rest of the compiler) is written in Rust. Be excited. For everyone else, the phrase inside double-quotes on each line is the only relevant portion. That's the name of the token that's being defined. You should be able to guess which concept that each of these tokens represents. 
+The phrase inside double-quotes on each line is the only relevant portion. That's the name of the token that's being defined. You should be able to guess which concept that each of these tokens represents. 
 
 The job of the lexer is to convert raw string text in {language} into these tokens. If the lexer is unable to do that at any point, it will give up and declare an error. 
 
